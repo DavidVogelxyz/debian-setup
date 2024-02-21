@@ -78,8 +78,8 @@ getuserandpass() {
     echo -e "\\n\\nPlease enter a name for the new user that will be created by the script."
     read -p "Username: " username
 
-    while ! echo "$username" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-        echo "Invalid username. Please provide a username beginning with a lowercase letter, - or _."
+    while ! echo "$username" | grep -q "^[a-z][a-z0-9_-]*$"; do
+        echo "Invalid username. Please provide a username using lowercase letters; numbers, -, or _ can be used if not the first character."
         read -p "Username: " username
     done
 
@@ -91,7 +91,7 @@ getuserandpass() {
 
 	while ! [ "$userpass1" = "$userpass2" ]; do
         echo -e "\\nThe passwords entered do not match each other.\\n\\nPlease enter the passwords again."
-        read -sp "Root password: " userpass1
+        read -sp "User password: " userpass1
 
         echo -e "\\nPlease retype the password."
         read -sp "Verify: " userpass2
@@ -102,16 +102,16 @@ getnetworkinginfo() {
     echo -e "\\n\\nPlease enter a hostname for the Debian computer."
     read -p "Hostname: " hostname
 
-    while ! echo "$hostname" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-        echo "Invalid hostname. Please provide a hostname beginning with a lowercase letter, - or _."
+    while ! echo "$hostname" | grep -q "^[a-z][a-z0-9_-]*$"; do
+        echo "Invalid hostname. Please provide a hostname using lowercase letters; numbers, -, or _ can be used if not the first character."
         read -p "Hostname: " hostname
     done
 
     echo -e "\\nPlease enter the domain of the network. If unsure, just enter 'local'."
     read -p "Local domain: " localdomain
 
-    while ! echo "$localdomain" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-        echo "Invalid domain. Please provide a domain beginning with a lowercase letter, - or _."
+    while ! echo "$localdomain" | grep -q "^[a-z][a-z0-9_.-]*$"; do
+        echo "Invalid domain. Please provide a domain using lowercase letters; numbers, -, _, or . can be used if not the first character."
         read -p "Local domain: " localdomain
     done
 }
