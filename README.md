@@ -7,7 +7,7 @@ Use the guide up until the point of chrooting into the new environment. From the
 ```
 cd
 
-curl -LJO https://github.com/davidvogelxyz/debian-setup/blob/master/debian-setup.sh
+curl -LJO https://raw.githubusercontent.com/DavidVogelxyz/debian-setup/master/debian-setup.sh
 
 bash debian-setup.sh
 ```
