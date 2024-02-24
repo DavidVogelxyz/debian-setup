@@ -2,7 +2,7 @@
 
 This script goes hand-in-hand with the Debian installation guide found in the [Library repo](https://github.com/davidvogelxyz/library).
 
-Use the guide up until the point of chrooting into the new environment. From there, use the following commands:
+Use the guide up until the point of chrooting into the new environment. From there, use the following commands (but, note that `curl` needs to be installed on the system):
 
 ```
 cd
