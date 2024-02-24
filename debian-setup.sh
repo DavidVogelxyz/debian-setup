@@ -294,6 +294,7 @@ dovimconfigs() {
     # for new user
     ln -s /home/$username/.local/src/vim /home/$username/.vim
     cp /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /home/$username/.config/shell/aliasrc
+    chown -R "$username": /home/$username
     echo -e "\nsource ~/.config/shell/aliasrc" >> "/home/$username/.bashrc"
 }
 
@@ -314,14 +315,15 @@ setupnetworking() {
 
 docryptsetup() {
     [[ $cryptanswer = "yes" ]] && {
-        apt install -y cryptsetup-initramfs > /dev/null 2>&1
+        echo -e "\\ninstalling 'cryptsetup-initramfs':"
+        apt install -y cryptsetup-initramfs
         blkid | grep UUID | grep crypto >> /etc/crypttab
         vim /etc/crypttab
     }
 }
 
 doinitramfsupdate() {
-    echo "updating initramfs"
+    echo -e "\\nupdating initramfs"
     update-initramfs -u -k all > /dev/null 2>&1
 }
 
