@@ -287,6 +287,7 @@ dovimconfigs() {
     cd /root
 
     # for root user
+    [ -d /root/.vim ] && rm -rf /root/.vim
     ln -s /home/$username/.local/src/vim /root/.vim
     cp /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /root/.config/shell/aliasrc
     echo -e "\nsource ~/.config/shell/aliasrc" >> /root/.bashrc
@@ -294,8 +295,8 @@ dovimconfigs() {
     # for new user
     ln -s /home/$username/.local/src/vim /home/$username/.vim
     cp /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /home/$username/.config/shell/aliasrc
-    chown -R "$username": /home/$username
     echo -e "\nsource ~/.config/shell/aliasrc" >> "/home/$username/.bashrc"
+    chown -R "$username": /home/$username
 }
 
 setupfstab() {
