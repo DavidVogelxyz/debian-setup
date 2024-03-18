@@ -12,6 +12,7 @@ additionalpkgs=(
 "lvm2"
 "rsync"
 "ssh"
+"stow"
 "sudo"
 "vim"
 )
@@ -289,12 +290,12 @@ dovimconfigs() {
     # for root user
     [ -d /root/.vim ] && rm -rf /root/.vim
     ln -s /home/$username/.local/src/vim /root/.vim
-    cp /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /root/.config/shell/aliasrc
+    ln -s /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /root/.config/shell/aliasrc
     echo -e "\nsource ~/.config/shell/aliasrc" >> /root/.bashrc
 
     # for new user
     ln -s /home/$username/.local/src/vim /home/$username/.vim
-    cp /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /home/$username/.config/shell/aliasrc
+    ln -s /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /home/$username/.config/shell/aliasrc
     echo -e "\nsource ~/.config/shell/aliasrc" >> "/home/$username/.bashrc"
     chown -R "$username": /home/$username
 }
