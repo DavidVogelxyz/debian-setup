@@ -68,13 +68,13 @@ getuserandpass() {
     echo -e "\\nPlease retype the password."
     read -sp "Verify: " rootpass2
 
-	while ! [ "$rootpass1" = "$rootpass2" ]; do
+    while ! [ "$rootpass1" = "$rootpass2" ]; do
         echo -e "\\nThe passwords entered do not match each other.\\n\\nPlease enter the passwords again."
         read -sp "Root password: " rootpass1
 
         echo -e "\\nPlease retype the password."
         read -sp "Verify: " rootpass2
-	done
+    done
 
     echo -e "\\n\\nPlease enter a name for the new user that will be created by the script."
     read -p "Username: " username
@@ -90,13 +90,13 @@ getuserandpass() {
     echo -e "\\nPlease retype the password."
     read -sp "Verify: " userpass2
 
-	while ! [ "$userpass1" = "$userpass2" ]; do
+    while ! [ "$userpass1" = "$userpass2" ]; do
         echo -e "\\nThe passwords entered do not match each other.\\n\\nPlease enter the passwords again."
         read -sp "User password: " userpass1
 
         echo -e "\\nPlease retype the password."
         read -sp "Verify: " userpass2
-	done
+    done
 }
 
 getnetworkinginfo() {
