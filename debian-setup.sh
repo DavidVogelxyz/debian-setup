@@ -211,21 +211,28 @@ confirminputs() {
     echo "Swap partition: $swapanswer"
 
     echo
-    read -p "Continue? (y/n): " confirm && [[ $confirm == [yY] ]] || ( echo "Exiting now." && exit 1 )
+    echo "Continue?"
+
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) echo "You chose 'yes'."; break;;
+            No ) echo "You chose 'no'."; echo "Exiting now."; exit 1;;
+        esac
+    done
 }
 
 adduserandpass() {
-	echo "root:$rootpass1" | chpasswd
-	unset rootpass1 rootpass2
+    echo "root:$rootpass1" | chpasswd
+    unset rootpass1 rootpass2
 
     echo -e "\\nCreating new user \"$username\"..."
     useradd -G sudo -s /bin/bash -m "$username"
-	export repodir="/home/$username/.local/src"
-	mkdir -p "$repodir"
-	chown -R "$username": "$(dirname "$repodir")"
+    export repodir="/home/$username/.local/src"
+    mkdir -p "$repodir"
+    chown -R "$username": "$(dirname "$repodir")"
 
-	echo "$username:$userpass1" | chpasswd
-	unset userpass1 userpass2
+    echo "$username:$userpass1" | chpasswd
+    unset userpass1 userpass2
 }
 
 setuphostname() {
@@ -279,25 +286,46 @@ installpackages() {
     done
 }
 
-dovimconfigs() {
+doconfigs() {
     # clone git repos into new user's repodir
-    mkdir -p /root/.config/shell /home/$username/.config/shell
-    cd "$repodir"
-    git clone https://github.com/davidvogelxyz/dotfiles > /dev/null 2>&1
-    git clone https://github.com/davidvogelxyz/vim > /dev/null 2>&1
-    cd /root
+    mkdir -p \
+        /home/$username/.cache/bash \
+        /home/$username/.cache/zsh \
+        /home/$username/.config \
+        /root/.cache/bash \
+        /root/.cache/zsh \
+        /root/.config/shell
+    git clone https://github.com/davidvogelxyz/dotfiles "/home/$username/.dotfiles" > /dev/null 2>&1
+    ln -s "/home/$username/.dotfiles" "$repodir/dotfiles"
+
+    git clone https://github.com/davidvogelxyz/vim "$repodir/vim" > /dev/null 2>&1
 
     # for root user
-    [ -d /root/.vim ] && rm -rf /root/.vim
-    ln -s /home/$username/.local/src/vim /root/.vim
-    ln -s /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /root/.config/shell/aliasrc
-    echo -e "\nsource ~/.config/shell/aliasrc" >> /root/.bashrc
+    [ -e /root/.bashrc ] && rm -f /root/.bashrc
+    [ -e /root/.profile ] && rm -f /root/.profile
+    [ -e /root/.vim ] && rm -rf /root/.vim
+
+    ln -s "/home/$username/.dotfiles/.bashrc" /root/.bashrc
+    ln -s "/home/$username/.dotfiles/.config/shell/profile" /root/.profile
+    ln -s "$repodir/vim" /root/.vim
+
+    ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" /root/.config/shell/aliasrc
 
     # for new user
-    ln -s /home/$username/.local/src/vim /home/$username/.vim
-    ln -s /home/$username/.local/src/dotfiles/.config/shell/aliasrc-debian /home/$username/.config/shell/aliasrc
-    echo -e "\nsource ~/.config/shell/aliasrc" >> "/home/$username/.bashrc"
-    chown -R "$username": /home/$username
+    [ -e "/home/$username/.bashrc" ] && rm -f "/home/$username/.bashrc"
+    [ -e "/home/$username/.profile" ] && rm -f "/home/$username/.profile"
+    [ -e "/home/$username/.vim" ] && rm -rf "/home/$username/.vim"
+
+    cd "/home/$username/.dotfiles" && stow . && cd /root
+
+    ln -s "/home/$username/.dotfiles/.config/shell/profile" "/home/$username/.profile"
+    sed -i 's/^\[ "\$(tty)"/#[ "$(tty)"]/g' "/home/$username/.dotfiles/.config/shell/profile"
+    echo -e "\nsource ~/.bashrc" >> "/home/$username/.dotfiles/.config/shell/profile"
+    ln -s "$repodir/vim" "/home/$username/.vim"
+
+    ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" "/home/$username/.config/shell/aliasrc"
+
+    chown -R "$username": "/home/$username"
 }
 
 setupfstab() {
@@ -372,7 +400,7 @@ setuplocalegen
 
 installpackages
 
-dovimconfigs
+doconfigs
 
 setupfstab
 
