@@ -14,6 +14,8 @@ additionalpkgs=(
 "ssh"
 "stow"
 "sudo"
+"tmux"
+"tree"
 "vim"
 )
 
@@ -289,9 +291,9 @@ installpackages() {
 doconfigs() {
     # clone git repos into new user's repodir
     mkdir -p \
-        /home/$username/.cache/bash \
-        /home/$username/.cache/zsh \
-        /home/$username/.config \
+        "/home/$username/.cache/bash" \
+        "/home/$username/.cache/zsh" \
+        "/home/$username/.config" \
         /root/.cache/bash \
         /root/.cache/zsh \
         /root/.config/shell
