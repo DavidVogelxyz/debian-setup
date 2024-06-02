@@ -283,7 +283,7 @@ installpackages() {
     echo -e "\\ninstalling additional packages:"
 
     for additionalpkg in "${additionalpkgs[@]}"; do
-        echo "'$additionalpkg' is not yet installed on this computer. Installing '$additionalpkg' now..."
+        echo "Installing '$additionalpkg' now..."
         apt install -y $additionalpkg > /dev/null 2>&1
     done
 }
