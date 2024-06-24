@@ -7,8 +7,8 @@ Use the guide up until the point of chrooting into the new environment. From the
 ```
 apt update && apt install -y git
 mkdir -pv ~/.local/src && cd ~/.local/src
-git clone https://github.com/davidvogelxyz/debian-setup
-bash debian-setup/debian-setup.sh
+git clone https://github.com/davidvogelxyz/debian-setup && cd debian-setup
+bash debian-setup.sh
 ```
 
 Answer a few questions and save time on installation!
@@ -18,6 +18,6 @@ Answer a few questions and save time on installation!
 Get the script working such that the guide can do pre-`chroot` operations too. Include:
 
 - `debootstrap`
-- running the "mount --rbind" command
+- running the `mount --rbind` command
 - copying "/etc/resolv.conf"
 - making adjustments to "/mnt/etc/apt/sources.list"
