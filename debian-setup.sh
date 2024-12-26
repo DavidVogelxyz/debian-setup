@@ -226,9 +226,11 @@ doconfigs() {
         "/home/$username/.cache/bash" \
         "/home/$username/.cache/zsh" \
         "/home/$username/.config" \
+        "/home/$username/.local/bin" \
         /root/.cache/bash \
         /root/.cache/zsh \
-        /root/.config/shell
+        /root/.config/shell \
+        /root/.local/bin
     git clone https://github.com/davidvogelxyz/dotfiles "/home/$username/.dotfiles" > /dev/null 2>&1
     ln -s "/home/$username/.dotfiles" "$repodir/dotfiles"
 
