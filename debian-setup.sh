@@ -228,6 +228,8 @@ doconfigs() {
         "/home/$username/.local/bin" \
         /root/.cache/bash \
         /root/.cache/zsh \
+        /root/.config/lf \
+        /root/.config/shell \
         /root/.local/bin
 
     # clone git repos into new user's repodir
@@ -241,25 +243,30 @@ doconfigs() {
     [ -e /root/.profile ] && rm -f /root/.profile
     [ -e /root/.vim ] && rm -rf /root/.vim
 
-    ln -s "/home/$username/.dotfiles/.bashrc" /root/.bashrc
-    ln -s "/home/$username/.dotfiles/.config/shell/profile" /root/.profile
-    ln -s "$repodir/vim" /root/.vim
-
-    ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" /root/.config/shell/aliasrc
-    ln -s "/home/$username/.dotfiles/.config/lf/scope-debian" /root/.config/lf/scope
-
     # for new user
     [ -e "/home/$username/.bashrc" ] && rm -f "/home/$username/.bashrc"
     [ -e "/home/$username/.profile" ] && rm -f "/home/$username/.profile"
     [ -e "/home/$username/.vim" ] && rm -rf "/home/$username/.vim"
 
+    # stow
     cd "/home/$username/.dotfiles" && stow . && cd && unlink "/home/$username/.xprofile"
 
+    # for root user
     ln -s "/home/$username/.dotfiles/.config/shell/profile" "/home/$username/.profile"
     sed -i 's/^\[ "\$(tty)"/#[ "$(tty)"]/g' "/home/$username/.dotfiles/.config/shell/profile"
     echo -e "\nsource ~/.bashrc" >> "/home/$username/.dotfiles/.config/shell/profile"
     ln -s "$repodir/vim" "/home/$username/.vim"
 
+    # for root user
+    ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" /root/.config/shell/aliasrc
+    ln -s "/home/$username/.dotfiles/.config/lf/scope-debian" /root/.config/lf/scope
+
+    # for new user
+    ln -s "/home/$username/.dotfiles/.bashrc" /root/.bashrc
+    ln -s "/home/$username/.dotfiles/.config/shell/profile" /root/.profile
+    ln -s "$repodir/vim" /root/.vim
+
+    # for new user
     ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" "/home/$username/.config/shell/aliasrc"
     ln -s "/home/$username/.dotfiles/.config/lf/scope-debian" "/home/$username/.config/lf/scope"
 
