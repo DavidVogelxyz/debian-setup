@@ -254,6 +254,7 @@ doconfigs() {
     # for root user
     ln -s "/home/$username/.dotfiles/.config/shell/profile" "/home/$username/.profile"
     sed -i 's/^\[ "\$(tty)"/#[ "$(tty)"]/g' "/home/$username/.dotfiles/.config/shell/profile"
+    sed -i 's/^sudo -n loadkeys "$XDG_DATA_HOME/#sudo -n loadkeys "$XDG_DATA_HOME/g' "/home/$username/.dotfiles/.config/shell/profile"
     echo -e "\nsource ~/.bashrc" >> "/home/$username/.dotfiles/.config/shell/profile"
     ln -s "$repodir/vim" "/home/$username/.vim"
 
