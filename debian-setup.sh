@@ -221,20 +221,20 @@ doconfigs() {
     whiptail --infobox "Performing some basic configurations. At some point, vim will open \"/etc/fstab\". You should know what to do here." \
         9 70
 
-    # clone git repos into new user's repodir
+    # create directories that should exist before deploying dotfiles with stow
     mkdir -p \
         "/home/$username/.cache/bash" \
         "/home/$username/.cache/zsh" \
-        "/home/$username/.config" \
         "/home/$username/.local/bin" \
         /root/.cache/bash \
         /root/.cache/zsh \
-        /root/.config/shell \
         /root/.local/bin
-    git clone https://github.com/davidvogelxyz/dotfiles "/home/$username/.dotfiles" > /dev/null 2>&1
+
+    # clone git repos into new user's repodir
+    git clone https://github.com/DavidVogelxyz/dotfiles "/home/$username/.dotfiles" > /dev/null 2>&1
     ln -s "/home/$username/.dotfiles" "$repodir/dotfiles"
 
-    git clone https://github.com/davidvogelxyz/vim "$repodir/vim" > /dev/null 2>&1
+    git clone https://github.com/DavidVogelxyz/vim "$repodir/vim" > /dev/null 2>&1
 
     # for root user
     [ -e /root/.bashrc ] && rm -f /root/.bashrc
@@ -246,13 +246,14 @@ doconfigs() {
     ln -s "$repodir/vim" /root/.vim
 
     ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" /root/.config/shell/aliasrc
+    ln -s "/home/$username/.dotfiles/.config/lf/scope-debian" /root/.config/lf/scope
 
     # for new user
     [ -e "/home/$username/.bashrc" ] && rm -f "/home/$username/.bashrc"
     [ -e "/home/$username/.profile" ] && rm -f "/home/$username/.profile"
     [ -e "/home/$username/.vim" ] && rm -rf "/home/$username/.vim"
 
-    cd "/home/$username/.dotfiles" && stow . && cd /root
+    cd "/home/$username/.dotfiles" && stow . && cd && unlink "/home/$username/.xprofile"
 
     ln -s "/home/$username/.dotfiles/.config/shell/profile" "/home/$username/.profile"
     sed -i 's/^\[ "\$(tty)"/#[ "$(tty)"]/g' "/home/$username/.dotfiles/.config/shell/profile"
@@ -260,6 +261,11 @@ doconfigs() {
     ln -s "$repodir/vim" "/home/$username/.vim"
 
     ln -s "/home/$username/.dotfiles/.config/shell/aliasrc-debian" "/home/$username/.config/shell/aliasrc"
+    ln -s "/home/$username/.dotfiles/.config/lf/scope-debian" "/home/$username/.config/lf/scope"
+
+    dozshsetup
+
+    sudo chsh -s /bin/zsh "$username"
 
     chown -R "$username": "/home/$username"
 
@@ -272,6 +278,25 @@ doconfigs() {
     sed -i '/^\/dev\/sr0/d' /etc/fstab
 
     vim /etc/fstab
+}
+
+dozshsetup(){
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k "$repodir/powerlevel10k" > /dev/null 2>&1
+
+    fonts=(
+        "MesloLGS_NF_Regular.ttf"
+        "MesloLGS_NF_Bold.ttf"
+        "MesloLGS_NF_Italic.ttf"
+        "MesloLGS_NF_Bold_Italic.ttf"
+    )
+
+    sudo mkdir -p /usr/local/share/fonts/m
+
+    for font in "${fonts[@]}"; do
+        webfont=$(echo $font | sed 's/_/%20/g')
+        [ ! -e /usr/local/share/fonts/m/$font ] \
+            && sudo curl -L https://github.com/romkatv/powerlevel10k-media/raw/master/$webfont -o /usr/local/share/fonts/m/$font > /dev/null 2>&1
+    done
 }
 
 docryptsetup() {
