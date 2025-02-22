@@ -23,6 +23,13 @@ error() {
     exit 1
 }
 
+getos() {
+    grep Debian /etc/os-release && export setup_os="debian"
+    grep Ubuntu /etc/os-release && export setup_os="ubuntu"
+
+    [[ $setup_os = "" ]] && echo "Are you sure you are running a Debian or Ubuntu system? This script won't proceed unless this check passes." && error
+}
+
 getuserandpass() {
     rootpass1=$(whiptail --title "Root Password" --passwordbox "\\nPlease enter a password for the root user." \
         --nocancel 10 60 3>&1 1>&2 2>&3 3>&1
@@ -176,7 +183,9 @@ dobasicadjustments() {
 
     [[ -e /etc/localtime ]] && rm /etc/localtime
     ln -s "/usr/share/zoneinfo/$timezone" /etc/localtime
-    hwclock --systohc
+
+    # Ubuntu doesn't have `hwclock`
+    [[ $setup_os != "ubuntu" ]] && hwclock --systohc
 
     apt install nala -y > /dev/null 2>&1
 }
@@ -190,6 +199,22 @@ setuplocale() {
     apt install -y locales > /dev/null 2>&1
     [[ $region == "en_US" ]] && sed -i 's/^# en_US/en_US/g' /etc/locale.gen
     locale-gen > /dev/null 2>&1
+}
+
+setupubuntu() {
+    ubuntukernelconf=(
+'do_symlinks=no
+no_symlinks=yes'
+    )
+
+    ubuntunetworkconf=(
+'network:
+ version: 2
+ renderer: NetworkManager'
+    )
+
+    echo "$ubuntukernelconf" > /etc/kernel-img.conf
+    echo "$ubuntunetworkconf" > /etc/netplan/networkmanager.yaml
 }
 
 installloop() {
@@ -353,6 +378,8 @@ finalmessage() {
 
 echo "Updating packages, one moment..." && apt update > /dev/null 2>&1 && installpkg whiptail > /dev/null 2>&1
 
+getos
+
 getuserandpass
 
 getnetworkinginfo
@@ -366,6 +393,8 @@ adduserandpass
 dobasicadjustments
 
 setuplocale
+
+[[ $setup_os = "ubuntu" ]] && setupubuntu
 
 installloop
 
