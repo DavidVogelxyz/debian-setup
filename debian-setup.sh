@@ -310,6 +310,8 @@ dogrubinstall() {
 finalmessage() {
 	whiptail --title "Congrats!" --msgbox "Provided there were no hidden errors, \`debian-setup\` completed successfully and all packages and configurations are properly installed." \
         9 70
+
+    clear
 }
 
 ################################
